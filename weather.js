@@ -51,6 +51,12 @@ function weatherApp() {
 
 	set('label','HeaderTitle', LABEL_APP_HEADER);
 	set('label','Version',  APP_VERSION);
+	
+	// display welcome message
+	set('label','MainMessage', 'Hello, ' +
+		'Please click allow when prompted. '+ 
+		'Refresh the page if you missed it.'
+	);
 
 	promptUserForLocation();
 }
@@ -61,7 +67,8 @@ function promptUserForLocation() {
 	 	if (!navObject) throw 'Unsupported Browser';
 	 	
 		navObject.getCurrentPosition(getJSONFromAPI);
-	} catch(e) {
+	} catch(e) {	
+		// change main message
 		console.log('Error: ' + e)	
 	}
 }
@@ -114,7 +121,8 @@ function getJSONFromAPI(location) {
 	var latitude = location.coords.latitude;
 	var longitude = location.coords.longitude;	
 	api += '/' + latitude + ',' + longitude;
-	
+ 
+ 	hide('label', 'MainMessage');	
 	show('btn','MetricToggle');
 	toggleTemperatureMetric();
 	setTemperature(32); // for now
