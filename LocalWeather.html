@@ -20,25 +20,24 @@
 	</head>
 	<body>
 		<div class="container-fluid bg-inverse text-white">
-			<div id="headerSection" class="row">
+			<div id="section_Header" class="row">
 				<div class="col-lg-3"></div>
 				<div class="col-lg-6 text-center">
 					<ul>
-						<li><h1 id="pageTitle">Weather</h1></li>
-						<li><h2 id="labelUserLocation">{Location}</h2></li>
+						<li><h1 id="label_AppTitle">Weather</h1></li>
+						<li><h2 id="label_UserLocation">{Location}</h2></li>
 					</ul>
 				</div>
 				<div class="col-lg-3"></div>
 			</div>
-			<div id="temperatureSection" class="row">
+			<div id="section_Temperature" class="row">
 				<div class="col-lg-3"></div>
 				<div class="col-lg-6 text-center">
-					<ul>
-						<!-- &#8457; fahrenheiht | &#8451; celsius -->
-						<li><span id="labelTemperature">0</span>
-							<span id="symbolDegree">&#8457;</span>
+					<ul>	
+						<li><span id="label_Temperature">0</span>
+							<span id="label_TempMetric">&#8457;</span>
 						</li>
-						<li><a href="#" id="btnMetricToggle">Toggle</a></li>
+						<li><a href="#" id="btn_MetricToggle">Toggle</a></li>
 					</ul>
 				</div>
 				<div class="col-lg-3"></div>
@@ -47,7 +46,7 @@
 				<div class="col-lg-3"></div>
 				<div class="col-lg-6 text-center">
 					<ul>
-						<li><span id="labelVersionText">{version}</span></li>
+						<li><span id="label_Version"></span></li>
 						<li><a href="#" id="btnHomepage">pf</a></li>
 					</ul>
 				</div>

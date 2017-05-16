@@ -8,7 +8,6 @@
  *	
  *
  *	by phlfvry
- *  version: 0.01
  *
  *  Copyright 2017. All Rights Reserved.
  *
@@ -22,40 +21,54 @@
  *  
  */
 
-function get_location() {
-	
-	console.log("get_location() called");
+API_URL = "https://api.darksky.net/forecast/";
+API_KEY = '';
+APP_VERSION = 0.01;
 
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(showWeather);
-	} else {
-		console.log("Geolocation disabled, denied by user, or not supported.");	
+FAHRENHEIT = '&#8457;';
+CELSIUS = '&#8451;';
 
-		// update body with error message
+$(document).ready(function() {
+	weatherApp();
+});
+
+function weatherApp() {
+	update('label','Version', 'Version: ' + APP_VERSION);
+	document.getElementById('btn_MetricToggle').addEventListener('click', toggleTemperatureMetric);
+
+	promptUserForLocation();
+}
+
+function promptUserForLocation() {
+	 try {
+	 	
+	 	var navObject = navigator.geolocation;
+	 	if (!navObject) throw 'Unsupported Browser';
+	 	
+		navObject.getCurrentPosition(callAPIWithLocation);
+	 	 
+	} catch(e) {
+		console.log('Error: ' + e)	
 	}
 }
 
-function showWeather(location) {
-	
-	console.log("showWeather() called with param: " + location);	
-	
-	// capture and shorten location variables		
-	var latitude = location.coords.latitude;
-	var longtitude = location.coords.longtitude;
-
-	// DarkSky API
-	var API = "https://api.darksky.net/forecast/";
-	var API_Key = "typeAPIkeyhere";
-	var API_Params = API_Key + "/" + latitude + "," + longtitude;
-	
-	// update page elements with results from API
+function toggleTemperatureMetric() {
+	update('label', 'TempMetric', CELSIUS);
 }
 
-$(document).ready(function() {
+function update(element, id, newValue) {
+	var object = document.getElementById(element + '_' + id);
+	object.innerHTML = newValue;
+}
+
+function callAPIWithLocation(location) {
+	var latitude = location.coords.latitude;
+	var longitude = location.coords.longitude;
 	
-	console.log("Will call get_location()");
-	
-	// update page title with version
-	get_location();
-});
+	var api = API_URL + API_KEY +  '/' + latitude + ',' + longitude;
+    
+	// call API
+	// get response from API
+	// update page elements with results from API
+}
 
