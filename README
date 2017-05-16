@@ -2,7 +2,8 @@ LocalWeather WebApp
 by phlfvry
 
 TODO:
-- Script functionality 
+- Script functionality
+- Fix styling errors
 - Design various themes for different weather conditions
 	- Sunny, Clear, Cloudy, Rainy, Thunderstorm, Severe
 	- Day/Night
