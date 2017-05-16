@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<!-- Meta Tags-->
-		<meta charset="utf-8"/>
+		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
 		<title>Local Weather by phlfvry</title>
 		
 		<!--Bootstrap, Tether and jQuery -->
@@ -16,27 +14,25 @@
 		integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" 
 		integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-		
+
 		<link rel="stylesheet" href="style.css">
 		<script src="weather.js"></script>
 	</head>
-
 	<body>
 		<div class="container-fluid bg-inverse text-white">
-			
-			<!-- Header -->
-			<div class="row">
-				<div class="col-">
+			<div id="headerSection" class="row">
+				<div class="col-lg-3"></div>
+				<div class="col-lg-6 text-center">
 					<ul>
 						<li><h1 id="pageTitle">Weather</h1></li>
-						<li><h2 id="labelUserLocation">Anywhere, USA</h2></li>
+						<li><h2 id="labelUserLocation">{Location}</h2></li>
 					</ul>
 				</div>
+				<div class="col-lg-3"></div>
 			</div>
-
-			<!-- Temperature -->
-			<div class="row">
-				<div class="col-">
+			<div id="temperatureSection" class="row">
+				<div class="col-lg-3"></div>
+				<div class="col-lg-6 text-center">
 					<ul>
 						<!-- &#8457; fahrenheiht | &#8451; celsius -->
 						<li><span id="labelTemperature">0</span>
@@ -45,24 +41,18 @@
 						<li><a href="#" id="btnMetricToggle">Toggle</a></li>
 					</ul>
 				</div>
+				<div class="col-lg-3"></div>
 			</div>
-			
-			<!-- Footer -->
-			<footer>
-				<div class="row">
-					<div class="col-">
-						<ul>
-							<li><span id="labelVersionText">{version}</span></li>
-							<li><a href="#" id="btnHomepage">pf</a></li>
-						</ul>
-					</div>
+			<div id="footerSection" class="row">
+				<div class="col-lg-3"></div>
+				<div class="col-lg-6 text-center">
+					<ul>
+						<li><span id="labelVersionText">{version}</span></li>
+						<li><a href="#" id="btnHomepage">pf</a></li>
+					</ul>
 				</div>
-			</footer>
-
+				<div class="col-lg-3"></div>
+			</div>
 		</div>
 	</body>
-</html>
-
-
-
-	
+</html>	
