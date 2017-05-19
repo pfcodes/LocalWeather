@@ -12,25 +12,28 @@
  *  Copyright 2017. All Rights Reserved.
  *
  *	TODO:
- *		- JSON interpretor
- *		- Temperature conversion functions
- *		- Reorganize and clean up code.
+ *		- Temperature conversion functions.
+ *		- Reorganize and clean up code (make more DRY).
+ *		- Add powered by Darksky API label.
  *		- Obtain SSL Certificate to ensure crossbrowser compatibility with geolocation
  *		  with navigator.geolocation.
- *		- Register for; and, apply  DarkSky API.
- *		- Integrate into Portfolio Website
+ *		- Get new API key after testing.
+ *		- Integrate into portfolio website.
  *  
  */
 
-APP_VERSION = 0.01;
+APP_VERSION = 0.9;
 HOME_URL = 'http://www.phlfvry.com/';
 
-API_URL = 'https://api.darksky.net/forecast/';
-API_KEY = '';
+WEATHER_API_BASEURL = 'https://api.darksky.net/forecast/';
+WEATHER_API_KEY = '165abf3d9f0478fd6a5d0d053a8e52c8'; 
+WEATHER_API_FULLURL = WEATHER_API_BASEURL + WEATHER_API_KEY;
+
+GOOGLEMAPS_API_BASEURL = 'https://maps.googleapis.com/maps/api/geocode/json?';
 
 LABEL_APP_HEADER = 'Weather';
 LABEL_HOME_URL = 'pf';
-LABEL_TOGGLE_BTN = 'Convert';
+LABEL_TOGGLE_BTN = 'Toggle';
 LABEL_FAHRENHEIT = '&#8457;';
 LABEL_CELSIUS = '&#8451;';
 
@@ -44,18 +47,18 @@ function weatherApp() {
 	linkToHome.href = HOME_URL;
 	linkToHome.innerHTML = LABEL_HOME_URL;
 	
-	hide('btn', 'MetricToggle'); // hide until we're sure app starts
+	hide('btn', 'MetricToggle'); // make hidden by default
 	var toggleButton = get('btn', 'MetricToggle');
 	toggleButton.innerHTML = LABEL_TOGGLE_BTN;
 	toggleButton.addEventListener('click', toggleTemperatureMetric);
 
 	set('label','HeaderTitle', LABEL_APP_HEADER);
-	set('label','Version',  APP_VERSION);
+	set('label','Version', 'version ' + APP_VERSION);
 	
 	// display welcome message
-	set('label','MainMessage', 'Hello, ' +
-		'Please click allow when prompted. '+ 
-		'Refresh the page if you missed it.'
+	set('label','WelcomeMessage',
+		'Please allow location access. '+ 
+		'Refresh the page if you missed or denied it.'
 	);
 
 	promptUserForLocation();
@@ -65,17 +68,17 @@ function promptUserForLocation() {
 	 try {	 	
 	 	var navObject = navigator.geolocation;
 	 	if (!navObject) throw 'Unsupported Browser';
-	 	
 		navObject.getCurrentPosition(getJSONFromAPI);
 	} catch(e) {	
-		// change main message
+		set(label, 'WelcomeMessage',
+			'Error: Browser is not supported. Try another one.'
+		);
 		console.log('Error: ' + e)	
 	}
 }
 
 function toggleTemperatureMetric() {
 	var label = get('label','TempMetric');
-	
 	if (label.innerHTML == '℉') { // change this
 		// convert label_Temperature DOM to celsius
 		set('label', 'TempMetric', LABEL_CELSIUS);
@@ -90,12 +93,7 @@ function get(type, id) {
 }
 
 function set(type, id, newValue) {
-	// '*' type updates actual element tag
-	if (type == '*') {
-		var object = document.getElementsByTagName(id);	
-	} else {
-		var object = get(type, id);
-	}
+	var object = get(type, id);
 	object.innerHTML = newValue;
 }
 
@@ -107,6 +105,10 @@ function hide(type, id) {
    get(type, id).style.visibility = 'hidden';
 }
 
+function remove(type, id) {
+	get(type, id).remove();
+}
+
 function setTemperature(value) {
 	set('label', 'Temperature', value);
 }
@@ -116,21 +118,42 @@ function setLocation(value) {
 }
 
 function getJSONFromAPI(location) {
-	var api = API_URL + API_KEY;
-	
 	var latitude = location.coords.latitude;
 	var longitude = location.coords.longitude;	
-	api += '/' + latitude + ',' + longitude;
- 
- 	hide('label', 'MainMessage');	
-	show('btn','MetricToggle');
-	toggleTemperatureMetric();
-	setTemperature(32); // for now
-	setLocation('{' + latitude + ',' + longitude + '}');
-	// call API
-	// get JSON from API
+	var weatherapi = WEATHER_API_BASEURL + WEATHER_API_KEY + '/' + latitude + ',' + longitude;
+ 	var googlemapsapi = GOOGLEMAPS_API_BASEURL + 'latlng='+latitude+','+longitude;
 
+	set('label', 'WelcomeMessage', 'Loading...');
 
-	// update page elements
+	// call GoogleMaps API for location information
+	var cityandstate = '';
+	var googlemapsxhr = new XMLHttpRequest();
+	googlemapsxhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			data = JSON.parse(this.responseText);
+			cityname = data.results[0].address_components[2].short_name;
+			statename = data.results[0].address_components[4].short_name;
+			cityandstate = cityname + ', ' + statename;
+		}
+	}
+	googlemapsxhr.open("GET", googlemapsapi, true);
+	googlemapsxhr.send();
+
+	// call Weather API for weather information
+	var weatherxhr = new XMLHttpRequest();
+	weatherxhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			remove('label', 'WelcomeMessage');
+
+			data = JSON.parse(this.responseText);
+			setLocation(cityandstate);
+			setTemperature(Math.round(data.currently.temperature));
+			
+			show('btn', 'MetricToggle');
+			toggleTemperatureMetric();
+		}
+	}
+	weatherxhr.open("GET", weatherapi, true);
+	weatherxhr.send();
 }
 
