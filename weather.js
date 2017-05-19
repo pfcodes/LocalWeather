@@ -12,7 +12,7 @@
  *  Copyright 2017. All Rights Reserved.
  *
  *	TODO:
- *		- Temperature conversion functions.
+ *		- Temperature conversion functions and change style.
  *		- Reorganize and clean up code (make more DRY).
  *		- Add powered by Darksky API label.
  *		- Obtain SSL Certificate to ensure crossbrowser compatibility with geolocation
@@ -32,7 +32,7 @@ WEATHER_API_FULLURL = WEATHER_API_BASEURL + WEATHER_API_KEY;
 GOOGLEMAPS_API_BASEURL = 'https://maps.googleapis.com/maps/api/geocode/json?';
 
 LABEL_APP_HEADER = 'Weather';
-LABEL_HOME_URL = 'pf';
+LABEL_HOME_URL = 'by &lt; pf / &gt;';
 LABEL_TOGGLE_BTN = 'Toggle';
 LABEL_FAHRENHEIT = '&#8457;';
 LABEL_CELSIUS = '&#8451;';
@@ -57,8 +57,7 @@ function weatherApp() {
 	
 	// display welcome message
 	set('label','WelcomeMessage',
-		'Please allow location access. '+ 
-		'Refresh the page if you missed or denied it.'
+		'Please allow location access' 
 	);
 
 	promptUserForLocation();
@@ -134,6 +133,7 @@ function getJSONFromAPI(location) {
 			cityname = data.results[0].address_components[2].short_name;
 			statename = data.results[0].address_components[4].short_name;
 			cityandstate = cityname + ', ' + statename;
+			setLocation(cityandstate);
 		}
 	}
 	googlemapsxhr.open("GET", googlemapsapi, true);
@@ -146,7 +146,6 @@ function getJSONFromAPI(location) {
 			remove('label', 'WelcomeMessage');
 
 			data = JSON.parse(this.responseText);
-			setLocation(cityandstate);
 			setTemperature(Math.round(data.currently.temperature));
 			
 			show('btn', 'MetricToggle');

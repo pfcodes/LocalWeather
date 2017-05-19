@@ -3,11 +3,62 @@
  * Stylesheet for LocalWeather Web App 
  * 			by phlfvry
  *
+ * TODO: Format text and links
  */
 
+html {
+	height: 100%;
+}
 
-a#toggleButton {
-	font-size: 11px;
+body {
+	font-family: "Helvetica Neue";
+	height: 100%;
+	font-weight: lighter;
+	overflow: hidden;
+}	
+div#pageWrapper {
+	background: darkgray; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(lightblue,black); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(lightblue, black); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(lightblue, black); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(lightblue, black); /* Standard syntax */
+	height: 100%;
+}
+
+div#footerSection {
+	font-size: 12px;		
+	height:100%;	
+}
+
+
+h1#label_HeaderTitle {
+	font-family: "Helvetica Neue";
+	font-weight: 100;
+	font-size: 80px;
+	margin-top: 25%;
+}
+
+h2#label_UserLocation {
+	font-family: "Helvetica Neue";
+	font-style: italic;
+	font-weight: lighter;
+}
+
+#label_Temperature, #label_TempMetric {
+	font-size: 70px;
+	font-weight: 100;
+}
+
+
+a#btn_MetricToggle {
+	color: white;
+	font-size: 13px;
+	font-weight: lighter;
+
+}
+
+a#link_Homepage {
+	color: white;
 }
 
 ul {
