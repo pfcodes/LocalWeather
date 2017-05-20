@@ -1,10 +1,14 @@
-LocalWeather WebApp 
+LocalWeather WebApp - Version 1 
 by phlfvry
 
-TODO:
-- Finish scripting functionality
-- camelCase element Id's
-- Style CSS
+TODO (Current Version):
+- Obtain SSL certificate to ensure crossbrowser comaptibility with geolocation
+- Get new API key and hide it from within code
+- change title with javascript
+- camelCase DOM id's.
+- add required 'Powered by DarkSky API' object
+
+TODO (Version 2):
 - Design various themes for different weather conditions
 	- Sunny, Clear, Cloudy, Rainy, Thunderstorm, Severe
 	- Day/Night

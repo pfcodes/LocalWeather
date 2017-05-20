@@ -11,18 +11,10 @@
  *
  *  Copyright 2017. All Rights Reserved.
  *
- *	TODO:
- *		- Temperature conversion functions and change style.
- *		- Reorganize and clean up code (make more DRY).
- *		- Add powered by Darksky API label.
- *		- Obtain SSL Certificate to ensure crossbrowser compatibility with geolocation
- *		  with navigator.geolocation.
- *		- Get new API key after testing.
- *		- Integrate into portfolio website.
  *  
  */
 
-APP_VERSION = 0.9;
+APP_VERSION = '1.0';
 HOME_URL = 'http://www.phlfvry.com/';
 
 WEATHER_API_BASEURL = 'https://api.darksky.net/forecast/';
@@ -32,29 +24,28 @@ WEATHER_API_FULLURL = WEATHER_API_BASEURL + WEATHER_API_KEY;
 GOOGLEMAPS_API_BASEURL = 'https://maps.googleapis.com/maps/api/geocode/json?';
 
 LABEL_APP_HEADER = 'Weather';
-LABEL_HOME_URL = 'by &lt; pf / &gt;';
-LABEL_TOGGLE_BTN = 'Toggle';
-LABEL_FAHRENHEIT = '&#8457;';
-LABEL_CELSIUS = '&#8451;';
+LABEL_TOGGLE_BTN = 'Switch Units'; 
+LABEL_FAHRENHEIT = '&#176;F'; // °F
+LABEL_CELSIUS = '&#176;C'; // °C
+LABEL_HOME_URL = 'by &lt; pf / &gt;'; // < pf / >
 
 $(document).ready(function() {
 	weatherApp();
 });
 
 function weatherApp() {
-	// initializers	
+	// initialize DOM objects with constants	
+	set('label','HeaderTitle', LABEL_APP_HEADER);
+	set('label','Version', 'version ' + APP_VERSION);
+	
 	var linkToHome = get('link', 'Homepage');
 	linkToHome.href = HOME_URL;
 	linkToHome.innerHTML = LABEL_HOME_URL;
 	
-	hide('btn', 'MetricToggle'); // make hidden by default
 	var toggleButton = get('btn', 'MetricToggle');
 	toggleButton.innerHTML = LABEL_TOGGLE_BTN;
 	toggleButton.addEventListener('click', toggleTemperatureMetric);
 
-	set('label','HeaderTitle', LABEL_APP_HEADER);
-	set('label','Version', 'version ' + APP_VERSION);
-	
 	// display welcome message
 	set('label','WelcomeMessage',
 		'Please allow location access' 
@@ -65,9 +56,9 @@ function weatherApp() {
 
 function promptUserForLocation() {
 	 try {	 	
-	 	var navObject = navigator.geolocation;
-	 	if (!navObject) throw 'Unsupported Browser';
-		navObject.getCurrentPosition(getJSONFromAPI);
+	 	var navObject = navigator.geolocation; 	
+	 	if (!navObject) throw 'Unsupported Browser';		
+ 		navObject.getCurrentPosition(getJSONFromAPI);
 	} catch(e) {	
 		set(label, 'WelcomeMessage',
 			'Error: Browser is not supported. Try another one.'
@@ -76,17 +67,67 @@ function promptUserForLocation() {
 	}
 }
 
+function getJSONFromAPI(location) {
+	var latitude = location.coords.latitude;
+	var longitude = location.coords.longitude;	
+	var weatherapi = WEATHER_API_BASEURL + WEATHER_API_KEY + '/' + latitude + ',' + longitude;
+ 	var googlemapsapi = GOOGLEMAPS_API_BASEURL + 'latlng='+latitude+','+longitude;
+
+	set('label', 'WelcomeMessage', 'Loading...');
+
+	// call GoogleMaps API for location information
+	var cityandstate = '';
+	var googlemapsxhr = new XMLHttpRequest();
+	googlemapsxhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) { // succesful request GoogleMaps API
+			data = JSON.parse(this.responseText);
+			cityname = data.results[0].address_components[2].short_name;
+			statename = data.results[0].address_components[4].short_name;
+			cityandstate = cityname + ', ' + statename;
+			setLocation(cityandstate); // assign value to DOM
+		}
+	}
+	googlemapsxhr.open("GET", googlemapsapi, true);
+	googlemapsxhr.send();
+
+	// call Weather API for weather information
+	var weatherxhr = new XMLHttpRequest();
+	weatherxhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) { // succesful request from Weather API
+			remove('label', 'WelcomeMessage');
+
+			data = JSON.parse(this.responseText);
+			setTemperature(Math.round(data.currently.temperature)); // assign value to DOM
+			
+			show('btn', 'MetricToggle');
+			set('label','TempMetric', LABEL_FAHRENHEIT); // shows unit metric for the first time
+		}
+	}
+	weatherxhr.open("GET", weatherapi, true);
+	weatherxhr.send();
+}
+
 function toggleTemperatureMetric() {
 	var label = get('label','TempMetric');
-	if (label.innerHTML == '℉') { // change this
-		// convert label_Temperature DOM to celsius
+	
+	if (label.innerHTML == '°F') {
+		// convert to celsius
+		var oldValue = get('label','Temperature').innerHTML;
+		var newValue = Math.round((oldValue - 32) * 0.5556);
+
+		set('label', 'Temperature', newValue);
 		set('label', 'TempMetric', LABEL_CELSIUS);
 	} else {
-		// convert label_Temperature DOM to fahrenheit
+		// convert to fahrenheit
+		var oldValue = get('label','Temperature').innerHTML;
+		var newValue = Math.round((oldValue * 1.8) + 32);
+		
+		set('label', 'Temperature', newValue);
 		set('label', 'TempMetric', LABEL_FAHRENHEIT);
 	}
 }
 
+// CONVENIENCE FUNCTIONS
 function get(type, id) {
 	return document.getElementById(type + '_' + id);
 }
@@ -114,45 +155,5 @@ function setTemperature(value) {
 
 function setLocation(value) {
 	set('label', 'UserLocation', value);
-}
-
-function getJSONFromAPI(location) {
-	var latitude = location.coords.latitude;
-	var longitude = location.coords.longitude;	
-	var weatherapi = WEATHER_API_BASEURL + WEATHER_API_KEY + '/' + latitude + ',' + longitude;
- 	var googlemapsapi = GOOGLEMAPS_API_BASEURL + 'latlng='+latitude+','+longitude;
-
-	set('label', 'WelcomeMessage', 'Loading...');
-
-	// call GoogleMaps API for location information
-	var cityandstate = '';
-	var googlemapsxhr = new XMLHttpRequest();
-	googlemapsxhr.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			data = JSON.parse(this.responseText);
-			cityname = data.results[0].address_components[2].short_name;
-			statename = data.results[0].address_components[4].short_name;
-			cityandstate = cityname + ', ' + statename;
-			setLocation(cityandstate);
-		}
-	}
-	googlemapsxhr.open("GET", googlemapsapi, true);
-	googlemapsxhr.send();
-
-	// call Weather API for weather information
-	var weatherxhr = new XMLHttpRequest();
-	weatherxhr.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			remove('label', 'WelcomeMessage');
-
-			data = JSON.parse(this.responseText);
-			setTemperature(Math.round(data.currently.temperature));
-			
-			show('btn', 'MetricToggle');
-			toggleTemperatureMetric();
-		}
-	}
-	weatherxhr.open("GET", weatherapi, true);
-	weatherxhr.send();
 }
 
