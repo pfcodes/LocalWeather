@@ -14,20 +14,20 @@
  *  
  */
 
-APP_VERSION = '1.0';
-HOME_URL = 'http://www.phlfvry.com/';
+APP_VERSION 			= '1.0';
+HOME_URL 				= 'http://www.phlfvry.com/';
 
-WEATHER_API_BASEURL = 'https://api.darksky.net/forecast/';
-WEATHER_API_KEY = '165abf3d9f0478fd6a5d0d053a8e52c8'; 
-WEATHER_API_FULLURL = WEATHER_API_BASEURL + WEATHER_API_KEY;
+WEATHER_API_BASEURL 	= 'https://api.darksky.net/forecast/';
+WEATHER_API_KEY 		= '165abf3d9f0478fd6a5d0d053a8e52c8'; 
+WEATHER_API_FULLURL 	= WEATHER_API_BASEURL + WEATHER_API_KEY;
 
-GOOGLEMAPS_API_BASEURL = 'https://maps.googleapis.com/maps/api/geocode/json?';
+GOOGLEMAPS_API_BASEURL 	= 'https://maps.googleapis.com/maps/api/geocode/json?';
 
-LABEL_APP_HEADER = 'Weather';
-LABEL_TOGGLE_BTN = 'Switch Units'; 
-LABEL_FAHRENHEIT = '&#176;F'; // °F
-LABEL_CELSIUS = '&#176;C'; // °C
-LABEL_HOME_URL = 'by &lt; pf / &gt;'; // < pf / >
+LABEL_APP_HEADER 		= 'Weather';
+LABEL_TOGGLE_BTN 		= 'Switch Units'; 
+LABEL_FAHRENHEIT 		= '&#176;F'; // °F
+LABEL_CELSIUS 			= '&#176;C'; // °C
+LABEL_HOME_URL 			= 'by &lt; pf / &gt;'; // < pf / >
 
 $(document).ready(function() {
 	weatherApp();
@@ -58,7 +58,7 @@ function promptUserForLocation() {
 	 try {	 	
 	 	var navObject = navigator.geolocation; 	
 	 	if (!navObject) throw 'Unsupported Browser';		
- 		navObject.getCurrentPosition(getJSONFromAPI);
+ 		navObject.getCurrentPosition(getJSONFromAPI); // call getJSONFromAPI() with location info
 	} catch(e) {	
 		set(label, 'WelcomeMessage',
 			'Error: Browser is not supported. Try another one.'
@@ -127,33 +127,14 @@ function toggleTemperatureMetric() {
 	}
 }
 
-// CONVENIENCE FUNCTIONS
-function get(type, id) {
-	return document.getElementById(type + '_' + id);
-}
+// Convenience functions
+function get(type, id) { return document.getElementById(type + '_' + id); }
+function set(type, id, newValue) { get(type, id).innerHTML = newValue; }
 
-function set(type, id, newValue) {
-	var object = get(type, id);
-	object.innerHTML = newValue;
-}
+function show(type, id)	{ get(type, id).style.visibility = 'visible'; }
+function hide(type, id) { get(type, id).style.visibility = 'hidden'; }
+function remove(type, id) { get(type, id).remove(); }
 
-function show(type, id) {
-	get(type, id).style.visibility = 'visible';
-}
-
-function hide(type, id) {
-   get(type, id).style.visibility = 'hidden';
-}
-
-function remove(type, id) {
-	get(type, id).remove();
-}
-
-function setTemperature(value) {
-	set('label', 'Temperature', value);
-}
-
-function setLocation(value) {
-	set('label', 'UserLocation', value);
-}
+function setTemperature(value) { set('label', 'Temperature', value); }
+function setLocation(value) { set('label', 'UserLocation', value); }
 
