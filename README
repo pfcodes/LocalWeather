@@ -2,6 +2,7 @@ LocalWeather WebApp - Version 1
 by phlfvry
 
 TODO (Current Version):
+- Add icon that changes depending on the weather
 - Obtain SSL certificate to ensure crossbrowser comaptibility with geolocation
 - Get new API key and hide it from within code
 - change title with javascript

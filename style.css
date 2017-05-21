@@ -8,11 +8,13 @@
 
 html {
 	height: 100%;
+	min-height: 100%;
 }
 
 body {
 	font-family: "Helvetica Neue";
 	height: 100%;
+	min-height: 100%;
 	font-weight: lighter;
 	overflow: hidden;
 }	
@@ -23,24 +25,30 @@ div#pageWrapper {
     background: -moz-linear-gradient(lightblue, black); /* For Firefox 3.6 to 15 */
     background: linear-gradient(lightblue, black); /* Standard syntax */
 	height: 100%;
+	min-height: 100%;
+	padding: 10px;
 }
 
 div#footerSection {
-	font-size: 12px;		
-	height:100%;	
+	font-size: 12px;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	color: lightgray;
 }
 
 
 h1#label_HeaderTitle {
 	font-family: "Helvetica Neue";
 	font-weight: 100;
-	font-size: 80px;
+	font-size: 100px;
 	margin-top: 25%;
 }
 
 h2#label_UserLocation {
 	font-family: "Helvetica Neue";
-	font-size: 20px;
+	font-size: 40px;
 	font-style: italic;
 	font-weight: lighter;
 }

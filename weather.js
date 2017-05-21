@@ -23,11 +23,11 @@ WEATHER_API_FULLURL 	= WEATHER_API_BASEURL + WEATHER_API_KEY;
 
 GOOGLEMAPS_API_BASEURL 	= 'https://maps.googleapis.com/maps/api/geocode/json?';
 
-LABEL_APP_HEADER 		= 'Weather';
-LABEL_TOGGLE_BTN 		= 'Switch Units'; 
-LABEL_FAHRENHEIT 		= '&#176;F'; // °F
-LABEL_CELSIUS 			= '&#176;C'; // °C
-LABEL_HOME_URL 			= 'by &lt; pf / &gt;'; // < pf / >
+LABEL_APP_HEADER 	= 'Weather';
+LABEL_TOGGLE_BTN 	= 'Switch Units'; 
+LABEL_FAHRENHEIT	= '&#176;F'; // °F
+LABEL_CELSIUS 		= '&#176;C'; // °C
+LABEL_HOME_URL 		= '&lt; pf / &gt;'; // < pf / >
 
 $(document).ready(function() {
 	weatherApp();
