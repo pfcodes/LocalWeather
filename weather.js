@@ -3,40 +3,47 @@
  *  
  */
 
-APP_VERSION 		= '1.0';
-HOME_URL 			= 'http://www.phlfvry.com/';
+function CONST(key) {
+	var dict = {
+		'APP_VERSION': '1.0',
+		'HOME_URL': 'http://www.phlfvry.com/',
 
-WEATHER_API_BASEURL = 'https://api.darksky.net/forecast/';
-WEATHER_API_KEY 	= '165abf3d9f0478fd6a5d0d053a8e52c8'; 
-WEATHER_API_FULLURL = WEATHER_API_BASEURL + WEATHER_API_KEY;
+		'WEATHER_API_BASEURL': 'https://api.darksky.net/forecast/',
+		'WEATHER_API_KEY': '165abf3d9f0478fd6a5d0d053a8e52c8',
+		'WEATHER_API_FULLURL': this['WEATHER_API_BASEURL'] + this['WEATHER_API_KEY'],
+		
+		'GOOGLEMAPS_API_BASEURL': 'https://maps.googleapis.com/maps/api/geocode/json?',
+		
+		'LABEL_WELCOMEMESSAGE': 'Please allow location access',
+		'LABEL_APP_HEADER': 'Weather',
+		'LABEL_TOGGLE_BTN': 'Switch Units',
+		'LABEL_FAHRENHEIT': '&#176;F',
+		'LABEL_CELSIUS': '&#176;C',
+		'LABEL_HOME_URL': '&lt; pf / &gt;'
+	};
 
-GOOGLEMAPS_API_BASEURL = 'https://maps.googleapis.com/maps/api/geocode/json?';
-
-LABEL_APP_HEADER 	= 'Weather';
-LABEL_TOGGLE_BTN 	= 'Switch Units'; 
-LABEL_FAHRENHEIT	= '&#176;F'; // °F
-LABEL_CELSIUS 		= '&#176;C'; // °C
-LABEL_HOME_URL 		= '&lt; pf / &gt;'; // < pf / >
+	return dict[key];
+}
 
 $(document).ready(function() {
 	weatherApp();
 });
 
 function weatherApp() {
-	set('label','HeaderTitle', LABEL_APP_HEADER);
-	set('label','Version', 'version ' + APP_VERSION);
+	console.log(CONST('LABEL_APP_HEADER'));
+
+	set('label','HeaderTitle', CONST('LABEL_APP_HEADER'));
+	set('label','Version', 'version ' + CONST('APP_VERSION'));
 	
 	var linkToHome = get('link', 'Homepage');
-	linkToHome.href = HOME_URL;
-	linkToHome.innerHTML = LABEL_HOME_URL;
+	linkToHome.href = CONST('HOME_URL');
+	linkToHome.innerHTML = CONST('LABEL_HOME_URL');
 	
 	var toggleButton = get('btn', 'MetricToggle');
-	toggleButton.innerHTML = LABEL_TOGGLE_BTN;
+	toggleButton.innerHTML = CONST('LABEL_TOGGLE_BTN');
 	toggleButton.addEventListener('click', toggleTemperatureMetric);
 
-	set('label','WelcomeMessage',
-		'Please allow location access' 
-	);
+	set('label','WelcomeMessage', CONST('LABEL_WELCOME_MESSAGE'));
 
 	getUserLocation();
 }
@@ -57,8 +64,8 @@ function getUserLocation() {
 function getJSONFromAPI(location) {
 	var latitude = location.coords.latitude;
 	var longitude = location.coords.longitude;	
-	var weatherapi = WEATHER_API_BASEURL + WEATHER_API_KEY + '/' + latitude + ',' + longitude;
- 	var googlemapsapi = GOOGLEMAPS_API_BASEURL + 'latlng='+latitude+','+longitude;
+	var weatherapi = CONST('WEATHER_API_BASEURL') + CONST('WEATHER_API_KEY') + '/' + latitude + ',' + longitude;
+ 	var googlemapsapi = CONST('GOOGLEMAPS_API_BASEURL') + 'latlng='+latitude+','+longitude;
 
 	set('label', 'WelcomeMessage', 'Loading...');
 
@@ -85,7 +92,7 @@ function getJSONFromAPI(location) {
 			data = JSON.parse(this.responseText);
 			setTemperature(Math.round(data.currently.temperature));
 			show('btn', 'MetricToggle');
-			set('label','TempMetric', LABEL_FAHRENHEIT);
+			set('label','TempMetric', CONST('LABEL_FAHRENHEIT'));
 		}
 	}
 	weatherxhr.open("GET", weatherapi, true);
@@ -99,13 +106,13 @@ function toggleTemperatureMetric() {
 		var oldValue = get('label','Temperature').innerHTML;
 		var newValue = Math.round((oldValue - 32) * 0.5556);
 		set('label', 'Temperature', newValue);
-		set('label', 'TempMetric', LABEL_CELSIUS);
+		set('label', 'TempMetric', CONST('LABEL_CELSIUS'));
 	} else {
 		// convert to fahrenheit
 		var oldValue = get('label','Temperature').innerHTML;
 		var newValue = Math.round((oldValue * 1.8) + 32);
 		set('label', 'Temperature', newValue);
-		set('label', 'TempMetric', LABEL_FAHRENHEIT);
+		set('label', 'TempMetric', CONST('LABEL_FAHRENHEIT'));
 	}
 }
 
