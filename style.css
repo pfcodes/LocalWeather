@@ -18,12 +18,9 @@ body {
 	font-weight: lighter;
 	overflow: hidden;
 }	
+
 div#pageWrapper {
 	background: darkgray; /* For browsers that do not support gradients */
-    background: -webkit-linear-gradient(lightblue,black); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(lightblue, black); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(lightblue, black); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(lightblue, black); /* Standard syntax */
 	height: 100%;
 	min-height: 100%;
 	padding: 10px;
@@ -39,29 +36,28 @@ div#footerSection {
 }
 
 
-h1#label_HeaderTitle {
+h1#label_AppTitle {
 	font-family: "Helvetica Neue";
 	font-weight: 100;
-	font-size: 100px;
+	font-size: 70px;
 	margin-top: 25%;
 }
 
-h2#label_UserLocation {
+h2#label_AppSubtitle {
 	font-family: "Helvetica Neue";
-	font-size: 40px;
+	font-size: 20px;
 	font-style: italic;
 	font-weight: lighter;
 }
 
 #label_Temperature, #label_TempMetric {
-	font-size: 70px;
+	font-size: 100px;
 	font-weight: 100;
 }
 
-
 a#btn_MetricToggle {
 	color: white;
-	font-size: 13px;
+	font-size: 15px;
 	font-weight: lighter;	
 	visibility: hidden;
 }	
