@@ -2,17 +2,10 @@ LocalWeather WebApp - Version 1
 by phlfvry
 
 TODO (Current Version):
-- Add background that changes depending on the weather
-- Switch to jQuery Ajax method. refactor into one separate  module?
+- Add background that changes depending on the weather and time of day
+- Fix firefox cross origin request error
+- Add animations and effects
+- Add 'Powered by DarkSky API' object
 - Obtain SSL certificate to ensure crossbrowser comaptibility with
   geolocation
 - Get new API key and hide it from within code
-- change title with javascript
-- camelCase DOM id's.
-- add required 'Powered by DarkSky API' object
-
-TODO (Version 2):
-- Design various themes for different weather conditions
-	- Sunny, Clear, Cloudy, Rainy, Thunderstorm, Severe
-	- Day/Night
-- Add animations
