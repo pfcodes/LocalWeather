@@ -1,12 +1,11 @@
-
-var WeatherApp, CanvasArtisan, s;
+var WeatherApp, Canvas, CanvasArtisan, s, ctx;
 
 WeatherApp = {
 
 	properties: {
 		api: {
-			weather: 'https://api.darksky.net/forecast/165abf3d9f0478fd6a5d0d053a8e52c8/',
-			maps: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=',
+		weather: 'https://api.darksky.net/forecast/165abf3d9f0478fd6a5d0d053a8e52c8/',
+		maps: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=',
 		}, 
 		title: $('#label_AppTitle'),
 		subtitle: $('#label_AppSubtitle'),
@@ -87,9 +86,40 @@ WeatherApp = {
 	}
 };
 
-var CanvasArtisan = {};
+var Canvas = {
+
+	settings: {
+		canvas: $('#canvas')
+	},
+
+	init: function() {
+		ctx = this.settings.canvas[0].getContext('2d');
+		$(window).on('resize', this.resizeCanvas);
+		this.resizeCanvas();
+	},
+
+	resizeCanvas: function() {
+		Canvas.settings.canvas.width(innerWidth);
+		Canvas.settings.canvas.height(innerHeight);
+		this.drawBackground('day', 'cloudy');
+	},
+
+	drawBackground: function(timeOfDay, conditions) {
+		var colors = {
+			'day': '#199eda',
+			'night': '#071a4c'
+		}
+		ctx.fillStyle = colors[timeOfDay];
+		ctx.fillRect('0','0', innerWidth, innerHeight);
+	}
+};
+
+var CanvasArtisan = {
+	// stars, clouds, rain, lightning, etc.
+};
 
 $(function() {
+	Canvas.init();
 	WeatherApp.init();
 });
 

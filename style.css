@@ -19,6 +19,10 @@ div#pageWrapper {
 	padding: 10px;
 }
 
+#canvas {
+	z-index: -1;
+}
+
 div#footerSection {
 	font-size: 12px;
 	position: absolute;
