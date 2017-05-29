@@ -9,7 +9,7 @@ WeatherApp = {
 		}, 
 		title: $('#label_AppTitle'),
 		subtitle: $('#label_AppSubtitle'),
-		version: $('#label_Version'),
+		footer: $('#label_FooterText'),
 		welcome: $('#label_WelcomeMessage'),
 		temperature: $('#label_Temperature'),
 		temperatureLabel: $('#label_TempMetric'),
@@ -19,17 +19,23 @@ WeatherApp = {
 
 	init: function() {
 		s = this.properties;
+		this.bindActions();
 		this.start();
 	},
 
+	bindActions: function() {
+		s.toggleButton.on('click', this.toggleTemperatureMetric);
+	},
+
 	start: function() {
-		s.version.text('1.5');
+		
 		s.title.text('Local Weather');
+		s.footer.text('Powered by DarkSky API');
 		s.homeAnchor.attr('href', 'http://www.phlfvry.com/');
 		s.homeAnchor.text('< pf />');
 		s.welcome.text('Please allow location access.');
 		s.toggleButton.text('Switch Units');
-		s.toggleButton.on('click', this.toggleTemperatureMetric);
+
 		try {
 			if (!navigator.geolocation) throw 'Unsupported Browser';
 			navigator.geolocation.getCurrentPosition(this.getLocationBasedData);
@@ -89,33 +95,45 @@ WeatherApp = {
 var Canvas = {
 
 	settings: {
-		canvas: $('#canvas')
+		control: $('#canvas')
 	},
 
 	init: function() {
-		ctx = this.settings.canvas[0].getContext('2d');
-		$(window).on('resize', this.resizeCanvas);
+		this.bindActions();
+		ctx = this.settings.control[0].getContext('2d');
 		this.resizeCanvas();
 	},
 
+	bindActions: function() {
+		$(window).on('resize', this.resizeCanvas);
+	},
+
 	resizeCanvas: function() {
-		Canvas.settings.canvas.width(innerWidth);
-		Canvas.settings.canvas.height(innerHeight);
+		Canvas.settings.control.width(innerWidth);
+		Canvas.settings.control.height(innerHeight);
 		this.drawBackground('day', 'cloudy');
 	},
 
 	drawBackground: function(timeOfDay, conditions) {
 		var colors = {
-			'day': '#199eda',
-			'night': '#071a4c'
-		}
-		ctx.fillStyle = colors[timeOfDay];
-		ctx.fillRect('0','0', innerWidth, innerHeight);
+			'dawn': 		'',
+			'morning': 		'',
+			'afternoon': 	'',
+			'day': 			'#199eda',
+			'dusk':			'',
+			'night': 		'#071a4c'
+		};
+
+		CanvasArtisan.bgcolor(colors[timeOfDay]);
 	}
 };
 
 var CanvasArtisan = {
-	// stars, clouds, rain, lightning, etc.
+	bgcolor: function(color) {
+		ctx.fillStyle = color;
+		ctx.fillRect('0','0', innerWidth, innerHeight);
+	}
+	// stars, clouds, rain, lightning, grass, etc.
 };
 
 $(function() {

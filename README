@@ -3,9 +3,8 @@ by phlfvry
 
 TODO (Current Version):
 - Add background that changes depending on the weather and time of day
-- Fix firefox cross origin request error
 - Add animations and effects
-- Add 'Powered by DarkSky API' object
+- Put canvas behind text
+- Fix cross origin request error
 - Obtain SSL certificate to ensure crossbrowser comaptibility with
   geolocation
-- Get new API key and hide it from within code
