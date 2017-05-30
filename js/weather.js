@@ -1,6 +1,15 @@
-var WeatherApp, Canvas, CanvasArtisan, s, ctx;
+var WeatherApp, Canvas, CanvasArtisan, GeoLocation, s, ctx;
 
 WeatherApp = {
+
+	backdrops: {
+			'dawn': 		'',
+			'morning': 		'',
+			'afternoon': 	'',
+			'day': 			'#199eda',
+			'dusk':			'',
+			'night': 		'#071a4c'		
+	},
 
 	properties: {
 		api: {
@@ -35,11 +44,11 @@ WeatherApp = {
 	start: function() {
 		
 		s.title.text('Local Weather');
-		s.footer.text('Powered by DarkSky API');
-		s.homeAnchor.attr('href', 'http://www.phlfvry.com/');
-		s.homeAnchor.text('< pf />');
 		s.welcome.text('Please allow location access.');
 		s.toggleButton.text('Switch Units');
+		s.footer.text('Powered by DarkSky API');
+		s.homeAnchor.text('pf').attr('href', 'http://www.phlfvry.com/');
+
 
 		try {
 			if (!navigator.geolocation) throw 'Unsupported Browser';
@@ -99,7 +108,11 @@ WeatherApp = {
 	}
 };
 
-var Canvas = {
+GeoLocation = {
+	timeOfDay: 'day'
+};
+
+Canvas = {
 
 	settings: {
 		control: $('#canvas')
@@ -118,28 +131,19 @@ var Canvas = {
 	resizeCanvas: function() {
 		Canvas.settings.control.width(innerWidth);
 		Canvas.settings.control.height(innerHeight);
-		Canvas.drawBackground('day', 'cloudy');
+		Canvas.refresh();
 	},
 
-	drawBackground: function(timeOfDay, conditions) {
-		var colors = {
-			'dawn': 		'',
-			'morning': 		'',
-			'afternoon': 	'',
-			'day': 			'#199eda',
-			'dusk':			'',
-			'night': 		'#071a4c'
-		};
-
-		CanvasArtisan.bgcolor(colors[timeOfDay]);
+	refresh: function() {
+		CanvasArtisan.refreshBackground();
 		CanvasArtisan.draw();
 	}
 };
 
-var CanvasArtisan = {
+CanvasArtisan = {
 
-	bgcolor: function(color) {
-		ctx.fillStyle = color;
+	refreshBackground: function(color) {
+		ctx.fillStyle = color ? color : WeatherApp.backdrops[GeoLocation.timeOfDay];
 		ctx.fillRect('0','0', innerWidth, innerHeight);
 	},
 
@@ -147,15 +151,14 @@ var CanvasArtisan = {
 	
 	// draw loop
 	draw: function() {
-		ctx.fillStyle = '#199eda';
-		ctx.fillRect('0','0', innerWidth, innerHeight);
+		CanvasArtisan.refreshBackground();
 		var element = new Image();
 		var source = 'data:image/svg+xml;base64,' + window.btoa(WeatherApp.elements.cloud);
 		element.src = source;
 		element.onload = function () {
 			ctx.drawImage(element, 5, 5);
 			ctx.drawImage(element, 2, 23);
-			ctx.translate(.1,0);
+			ctx.translate(.05,0);
 		};
 		window.requestAnimationFrame(CanvasArtisan.draw);
 	}
