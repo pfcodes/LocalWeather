@@ -17,6 +17,11 @@ WeatherApp = {
 		homeAnchor: $('#link_Homepage'),
 	},
 
+	elements: {
+		'cloud': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925" fill="#fff" transform="matrix(.77976 0 0 .78395-299.99-418.63)"/></svg>',
+		'rain': '',
+	},
+
 	init: function() {
 		s = this.properties;
 		this.bindActions();
@@ -52,21 +57,23 @@ WeatherApp = {
 		WeatherApp.updateWeather(s.api.weather + apiQuery);
 	},
 
-	updateLocation: function(param) {
-		console.log('Update Location: ' + param);
-		$.getJSON(param, function(data) {
+	updateLocation: function(apiCall) {
+		console.log('Update Location: ' + apiCall);
+		$.getJSON(apiCall, function(data) {
 			s.title.text(
-				data.results[0].address_components[2].short_name+' '+
+				data.results[0].address_components[2].short_name 
+				+' '+
 				data.results[0].address_components[4].short_name
 			);
-			$(document).attr('title', data.results[0].address_components[2].short_name +
+			$(document).attr('title', 
+				data.results[0].address_components[2].short_name + 
 				' - Weather Conditions ');
 		});
 	},
 
-	updateWeather: function(param) {
-		console.log('Update Weather: ' + param);
-		$.getJSON(param, function(data) {
+	updateWeather: function(apiCall) {
+		console.log('Update Weather: ' + apiCall);
+		$.getJSON(apiCall, function(data) {
 			s.welcome.remove();
 			s.subtitle.text(data.currently.summary);
 			s.temperature.text(Math.round(data.currently.temperature));
@@ -111,7 +118,7 @@ var Canvas = {
 	resizeCanvas: function() {
 		Canvas.settings.control.width(innerWidth);
 		Canvas.settings.control.height(innerHeight);
-		this.drawBackground('day', 'cloudy');
+		Canvas.drawBackground('day', 'cloudy');
 	},
 
 	drawBackground: function(timeOfDay, conditions) {
@@ -125,16 +132,36 @@ var Canvas = {
 		};
 
 		CanvasArtisan.bgcolor(colors[timeOfDay]);
+		CanvasArtisan.draw();
 	}
 };
 
 var CanvasArtisan = {
+
 	bgcolor: function(color) {
 		ctx.fillStyle = color;
 		ctx.fillRect('0','0', innerWidth, innerHeight);
-	}
+	},
+
 	// stars, clouds, rain, lightning, grass, etc.
+	
+	// draw loop
+	draw: function() {
+		ctx.fillStyle = '#199eda';
+		ctx.fillRect('0','0', innerWidth, innerHeight);
+		var element = new Image();
+		var source = 'data:image/svg+xml;base64,' + window.btoa(WeatherApp.elements.cloud);
+		element.src = source;
+		element.onload = function () {
+			ctx.drawImage(element, 5, 5);
+			ctx.drawImage(element, 2, 23);
+			ctx.translate(.1,0);
+		};
+		window.requestAnimationFrame(CanvasArtisan.draw);
+	}
 };
+
+
 
 $(function() {
 	Canvas.init();
