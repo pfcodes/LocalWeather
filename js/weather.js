@@ -135,10 +135,13 @@ Canvas = {
 	},
 
 	refresh: function() {
-		CanvasArtisan.refreshBackground();
 		CanvasArtisan.draw();
 	}
 };
+
+// just clouds for now...
+var image = new Image();
+image.src = 'data:image/svg+xml;base64,' + window.btoa(WeatherApp.elements.cloud);
 
 CanvasArtisan = {
 
@@ -147,19 +150,12 @@ CanvasArtisan = {
 		ctx.fillRect('0','0', innerWidth, innerHeight);
 	},
 
-	// stars, clouds, rain, lightning, grass, etc.
-	
-	// draw loop
+	// main loop
 	draw: function() {
 		CanvasArtisan.refreshBackground();
-		var element = new Image();
-		var source = 'data:image/svg+xml;base64,' + window.btoa(WeatherApp.elements.cloud);
-		element.src = source;
-		element.onload = function () {
-			ctx.drawImage(element, 5, 5);
-			ctx.drawImage(element, 2, 23);
-			ctx.translate(.05,0);
-		};
+		ctx.drawImage(image, 35, 5, 16, 16);
+		ctx.drawImage(image, 10, 0, 16, 16);
+		ctx.translate(0.05,0);
 		window.requestAnimationFrame(CanvasArtisan.draw);
 	}
 };
