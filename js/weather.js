@@ -49,7 +49,6 @@ WeatherApp = {
 		s.footer.text('Powered by DarkSky API');
 		s.homeAnchor.text('pf').attr('href', 'http://www.phlfvry.com/');
 
-
 		try {
 			if (!navigator.geolocation) throw 'Unsupported Browser';
 			navigator.geolocation.getCurrentPosition(this.getLocationBasedData);
@@ -60,8 +59,9 @@ WeatherApp = {
 	},
 
 	getLocationBasedData: function(location) {
+		var apiQuery;
 		s.welcome.text('Loading...');
-		var apiQuery = location.coords.latitude+','+location.coords.longitude;
+		apiQuery = location.coords.latitude+','+location.coords.longitude;
 		WeatherApp.updateLocation(s.api.maps + apiQuery);
 		WeatherApp.updateWeather(s.api.weather + apiQuery);
 	},
@@ -159,8 +159,6 @@ CanvasArtisan = {
 		window.requestAnimationFrame(CanvasArtisan.draw);
 	}
 };
-
-
 
 $(function() {
 	Canvas.init();
