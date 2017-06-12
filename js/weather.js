@@ -1,12 +1,12 @@
 'use strict'
 
 var WeatherApp,
-Elements,
-Canvas, 
-CanvasArtisan, 
-GeoLocation, 
-s, 
-ctx
+	Elements,
+	Canvas, 
+	CanvasArtisan, 
+	GeoLocation, 
+	s, 
+	ctx
 
 WeatherApp = {
 	backdrops: {
@@ -21,7 +21,7 @@ WeatherApp = {
 	properties: {
 		api: {
 			weather: 'https://api.darksky.net/forecast/165abf3d9f0478fd6a5d0d053a8e52c8/',
-			maps: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=',
+			maps: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='
 		}, 
 		title: $('#label_AppTitle'),
 		subtitle: $('#label_AppSubtitle'),
@@ -112,15 +112,11 @@ var elementImage = new Image()
 
 Elements = {
 	cloud: {
-		baseSize: 16,	// pixels
+		baseSize: {
+			w: 16,
+			h: 16
+		},	// pixels
 		image: 'cloud.svg',
-		behavior: {
-			direction: 'x'
-		},
-		spacing: {
-			min: 10,
-			max: 50
-		}
 	}
 }
 
@@ -132,55 +128,60 @@ Canvas = {
 	settings: {
 		control: $('#canvas')
 	},
-
 	init: function() {
 		this.bindActions()
 		ctx = this.settings.control[0].getContext('2d')
 		this.resizeCanvas()
 	},
-
 	bindActions: function() {
 		$(window).on('resize', this.resizeCanvas)
 	},
-
 	resizeCanvas: function() {
 		Canvas.settings.control.width(innerWidth)
 		Canvas.settings.control.height(innerHeight)
 		Canvas.refresh()
 	},
-
 	refresh: function() {
 		CanvasArtisan.drawScene()
 	}
 }
 
-var x, y, h, w
+var clouds = [{
+		x: 5,
+		y: 5,
+		speed: 0.09,
+		scale: 2
+		}, {
+		x: 51,
+		y: 2,
+		speed: 0.05,
+		scale: 1.5
+}]
 
 CanvasArtisan = {
 	refreshBackground: function(color) {
 		ctx.fillStyle = color ? color : WeatherApp.backdrops[GeoLocation.timeOfDay]
 		ctx.fillRect(0, 0, innerWidth, innerHeight)
 	},
-	drawElements: function() {
+	drawStaticElement: function() {
+		// sun, moon
+	},
+	animateElements: function() {
 		// just clouds for now...
 		let e = Elements.cloud;
 		elementImage.src = `./elements/${e.image}`
-
-		let clouds = [1, 1.7, 1.3, 2, 1.9] // scale
-
-		for (let i = 0; i < clouds.length-1; i++){
-		 	x = i * (e.baseSize*clouds[i]*2)
-			y = 0
-			w = e.baseSize*clouds[i]
-			h = e.baseSize*clouds[i]
-			ctx.drawImage(elementImage, x, y, w, h)
-			ctx.translate(clouds[i]*0.015, 0)
+		for (let i = 0; i < clouds.length; i++){
+			ctx.drawImage(elementImage, clouds[i].x, clouds[i].y, clouds[i].w, clouds[i].h)
+			clouds[i].x += clouds[i].speed
+			clouds[i].y = clouds[i].y
+			clouds[i].w = e.baseSize.w * clouds[i].scale
+			clouds[i].h = e.baseSize.h * clouds[i].scale
 		}
 	}, 
 	// main loop
 	drawScene: function() {
 		CanvasArtisan.refreshBackground()
-		CanvasArtisan.drawElements()
+		CanvasArtisan.animateElements()
 		window.requestAnimationFrame(CanvasArtisan.drawScene)
 	}
 }
