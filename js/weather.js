@@ -2,17 +2,14 @@
 
 let $DOM,
 	WeatherApp,
+	WeatherElements,
 	GeoLocation,
-	Elements,
 	Canvas, 
 	CanvasArtisan,
 	ctx
 
 WeatherApp = {
-	api: {
-		weather: 'https://api.darksky.net/forecast/165abf3d9f0478fd6a5d0d053a8e52c8/',
-		maps: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='
-	},
+	api: 'https://api.darksky.net/forecast/165abf3d9f0478fd6a5d0d053a8e52c8/',
 
 	dom: {
 		title: $('#label_AppTitle'),
@@ -41,42 +38,16 @@ WeatherApp = {
 		$DOM.toggleButton.text('Switch Units')
 		$DOM.footer.text('Powered by DarkSky API')
 		$DOM.homeAnchor.text('pf').attr('href', 'http://www.phlfvry.com/')
-
-		try {
-			if (!navigator.geolocation) throw 'Unsupported Browser'
-			navigator.geolocation.getCurrentPosition(this.getLocationBasedData)
-		} catch (e) {
-			$DOM.welcome.text('Error: ' + e)
-			console.log('Error: ' + e)
-		}
-	},
-
-	getLocationBasedData: function(location) {
-		$DOM.welcome.text('Loading...')
-		const apiQuery = location.coords.latitude+','+location.coords.longitude
-		WeatherApp.updateLocation(WeatherApp.api.maps + apiQuery)
-		WeatherApp.updateWeather(WeatherApp.api.weather + apiQuery)
-	},
-
-	updateLocation: function(apiCall) {
-		console.log('Update Location: ' + apiCall)
-		$.getJSON(apiCall, function(data) {
-			const d = data.results[0]
-			let [cityName, stateName] = [
-				d.address_components[2].short_name, 
-				d.address_components[4].short_name
-			]
-			$DOM.title.text(`${cityName} ${stateName}`)
-			$(document).attr('title', `${cityName} - Weather Conditions`)
-		})
 	},
 
 	updateWeather: function(apiCall) {
-		console.log('Update Weather: ' + apiCall);
+		console.log(`[WeatherApp]: API call - ${apiCall}`);
 		$.getJSON(apiCall, function(data) {
+			const d = data.currently
+			GeoLocation.setTimeOfDay(d.time)
 			$DOM.welcome.remove()
-			$DOM.subtitle.text(data.currently.summary)
-			$DOM.temperature.text(Math.round(data.currently.temperature))
+			$DOM.subtitle.text(d.summary)
+			$DOM.temperature.text(Math.round(d.temperature))
 			$DOM.toggleButton.css('visibility', 'visible')
 			$DOM.temperatureLabel.html('&deg;F')
 		})
@@ -100,27 +71,66 @@ WeatherApp = {
 }
 
 const elementImage = new Image()
-Elements = {
+WeatherElements = {
+	generate: function() {
+
+	}, 
+
 	cloud: {
-		baseSize: {
-			w: 16,
-			h: 16
-		},
 		image: 'cloud.svg',
+		width: 16,
+		height: 16
 	},
 
 	raindrop: {
-		baseSize: {
-			w: 16,
-			h: 16
-		},
-		image: 'raindrop.svg'
+		image: 'raindrop.svg',
+		width: 16,
+		height: 16
 	}
 }
 
 GeoLocation = {
-	// TODO: turn this into a function
-	timeOfDay: 'night'
+	api: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=',
+
+	attributes: {
+		latitude: '',
+		longitude: '',
+		cityName: '',
+		stateName: '',
+		timeOfDay: ''
+	},
+	
+	init: function() {
+		try {
+			if (!navigator.geolocation) throw 'Unsupported Browser' // TODO: add support for IP Lookup
+			navigator.geolocation.getCurrentPosition(this.locate)
+		} catch (e) {
+			$DOM.welcome.text('Error: ' + e)
+			console.log('Error: ' + e)
+		}
+	},
+
+	locate: function(results) {
+		$DOM.welcome.text('Loading...')
+		const a = GeoLocation.attributes
+		a.latitude = results.coords.latitude
+		a.longitude = results.coords.longitude
+		const apiCall = `${GeoLocation.api}${a.latitude},${a.longitude}`
+		console.log(`[GeoLocation]: API call - ${apiCall}`)
+		$.getJSON(apiCall, function(data) {
+			const d = data.results[0]
+			a.cityName = d.address_components[2].short_name
+			a.stateName = d.address_components[4].short_name
+			$DOM.title.text(`${a.cityName} ${a.stateName}`)
+			$(document).attr('title', `${a.cityName} - Weather Conditions`)
+		})
+		WeatherApp.updateWeather(`${WeatherApp.api}${a.latitude},${a.longitude}`)
+	},
+
+	setTimeOfDay: function(time){
+		// TODO: Call CanvasArtisan to update new background color
+		console.log(`[GeoLocation]: ${time}`)
+	}
 }
 
 Canvas = {
@@ -191,7 +201,7 @@ CanvasArtisan = {
 	},
 
 	refreshBackground: function(color) {
-		ctx.fillStyle = color || this.backdrops[GeoLocation.timeOfDay]
+		ctx.fillStyle = this.backdrops[GeoLocation.attributes.timeOfDay] || this.backdrops['day']
 		ctx.fillRect(0, 0, innerWidth, innerHeight)
 	},
 
@@ -200,15 +210,15 @@ CanvasArtisan = {
 	},
 
 	drawAnimatedElements: function() {
-		const e = Elements.raindrop;
+		const e = WeatherElements.cloud;
 		elementImage.src = `./elements/${e.image}`
-		let len = raindrops.length
+		let len = clouds.length
 		for (let i = 0; i < len; i++){
-			raindrops[i].x += raindrops[i].xSpeed || 0
-			raindrops[i].y += raindrops[i].ySpeed || 0
-			raindrops[i].w = e.baseSize.w * raindrops[i].scale || 1
-			raindrops[i].h = e.baseSize.h * raindrops[i].scale || 1
-			ctx.drawImage(elementImage, raindrops[i].x, raindrops[i].y, raindrops[i].w, raindrops[i].h)
+			clouds[i].x += clouds[i].xSpeed || 0
+			clouds[i].y += clouds[i].ySpeed || 0
+			clouds[i].w = e.width ? e.width * clouds[i].scale : 16
+			clouds[i].h = e.height ? e.height * clouds[i].scale : 16
+			ctx.drawImage(elementImage, clouds[i].x, clouds[i].y, clouds[i].w, clouds[i].h)
 		}
 	}, 
 
@@ -222,5 +232,6 @@ CanvasArtisan = {
 
 $(function() {
 	Canvas.init()
+	GeoLocation.init()
 	WeatherApp.init()
 })
