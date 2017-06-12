@@ -1,12 +1,12 @@
 'use strict'
 
-let WeatherApp,
+let $DOM,
+	WeatherApp,
 	GeoLocation,
 	Elements,
 	Canvas, 
 	CanvasArtisan,
-	ctx,
-	$DOM
+	ctx
 
 WeatherApp = {
 	api: {
@@ -61,14 +61,13 @@ WeatherApp = {
 	updateLocation: function(apiCall) {
 		console.log('Update Location: ' + apiCall)
 		$.getJSON(apiCall, function(data) {
-			$DOM.title.text(
-				data.results[0].address_components[2].short_name 
-				+' '+
-				data.results[0].address_components[4].short_name
-			)
-			$(document).attr('title', 
-				data.results[0].address_components[2].short_name + 
-				' - Weather Conditions ')
+			const d = data.results[0]
+			let [cityName, stateName] = [
+				d.address_components[2].short_name, 
+				d.address_components[4].short_name
+			]
+			$DOM.title.text(`${cityName} ${stateName}`)
+			$(document).attr('title', `${cityName} - Weather Conditions`)
 		})
 	},
 
@@ -156,14 +155,12 @@ var clouds = [
 		x: 5,
 		y: 5,
 		xSpeed: 0.09,
-		ySpeed: 0,
 		scale: 2
 	},
 	{
 		x: 51,
 		y: 2,
 		xSpeed: 0.05,
-		ySpeed: 0,
 		scale: 1.5
 	}
 ]
@@ -183,6 +180,7 @@ var raindrops = [
 }]
 
 CanvasArtisan = {
+	// TODO: add remaining colors and then turn them into gradients
 	backdrops: {
 		dawn: '',
 		morning: '',
@@ -204,12 +202,13 @@ CanvasArtisan = {
 	drawAnimatedElements: function() {
 		const e = Elements.raindrop;
 		elementImage.src = `./elements/${e.image}`
-		for (let i = 0; i < raindrops.length; i++){
-			ctx.drawImage(elementImage, raindrops[i].x, raindrops[i].y, raindrops[i].w, raindrops[i].h)
+		let len = raindrops.length
+		for (let i = 0; i < len; i++){
 			raindrops[i].x += raindrops[i].xSpeed || 0
 			raindrops[i].y += raindrops[i].ySpeed || 0
 			raindrops[i].w = e.baseSize.w * raindrops[i].scale || 1
 			raindrops[i].h = e.baseSize.h * raindrops[i].scale || 1
+			ctx.drawImage(elementImage, raindrops[i].x, raindrops[i].y, raindrops[i].w, raindrops[i].h)
 		}
 	}, 
 
