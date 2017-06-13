@@ -71,22 +71,37 @@ WeatherApp = {
 }
 
 const elementImage = new Image()
+
 WeatherElements = {
-	generate: function() {
+	wereGenerated: false,
+	elementArray: [],
 
-	}, 
-
-	cloud: {
-		image: 'cloud.svg',
-		width: 16,
-		height: 16
+	types: {
+		cloud: {
+			image: 'cloud.svg',
+			width: 16,
+			height: 16,
+			xSpeed: 0.5
+		},
+		raindrop: {
+			image: 'raindrop.svg',
+			width: 16,
+			height: 16,
+			ySpeed: 3
+		}
 	},
 
-	raindrop: {
-		image: 'raindrop.svg',
-		width: 16,
-		height: 16
-	}
+	getElements: function () {
+		let type = 'cloud'
+		elementImage.src = `./elements/${this.types[type].image}`
+		const count = 2;
+		//let keys = Object.getOwnPropertyNames(this.types[type])
+		for (let i = 0; i < count; i ++)
+		{
+			this.elementArray.push([this.types[type], {x: 0+(16*i), y: 0, scale: 2}])
+		}
+		this.wereGenerated = true;
+	},
 }
 
 GeoLocation = {
@@ -159,36 +174,6 @@ Canvas = {
 	}
 }
 
-// TODO: make these objects
-var clouds = [
-	{
-		x: 5,
-		y: 5,
-		xSpeed: 0.09,
-		scale: 2
-	},
-	{
-		x: 51,
-		y: 2,
-		xSpeed: 0.05,
-		scale: 1.5
-	}
-]
-
-var raindrops = [
-	{
-		x: 5,
-		y: 0,
-		ySpeed: 0.5,
-		scale: 0.3
-	}, 
-	{
-		x: 51,
-		y: 0,
-		ySpeed: 0.5,
-		scale: 0.3
-}]
-
 CanvasArtisan = {
 	// TODO: add remaining colors and then turn them into gradients
 	backdrops: {
@@ -210,15 +195,18 @@ CanvasArtisan = {
 	},
 
 	drawAnimatedElements: function() {
-		const e = WeatherElements.cloud;
-		elementImage.src = `./elements/${e.image}`
-		let len = clouds.length
-		for (let i = 0; i < len; i++){
-			clouds[i].x += clouds[i].xSpeed || 0
-			clouds[i].y += clouds[i].ySpeed || 0
-			clouds[i].w = e.width ? e.width * clouds[i].scale : 16
-			clouds[i].h = e.height ? e.height * clouds[i].scale : 16
-			ctx.drawImage(elementImage, clouds[i].x, clouds[i].y, clouds[i].w, clouds[i].h)
+		if (WeatherElements.wereGenerated) {
+			let e = WeatherElements.elementArray
+			let len = e.length
+			for (let i = 0; i < len; i++){
+				e[i][1].x += e[i][0].xSpeed || e[i][1].x
+				e[i][1].y += e[i][0].ySpeed || e[i][1].y
+				e[i][0].w = e[i][0].width ? e[i][0].width * e[i][1].scale : 16
+				e[i][0].h = e[i][0].height ? e[i][0].height * e[i][1].scale : 16
+				ctx.drawImage(elementImage, e[i][1].x, e[i][1].y, e[i][0].w, e[i][0].h)
+			}
+		} else {
+			WeatherElements.getElements()
 		}
 	}, 
 
