@@ -14,30 +14,26 @@ WeatherApp = {
 	dom: {
 		title: $('#label_AppTitle'),
 		subtitle: $('#label_AppSubtitle'),
-		footer: $('#label_FooterText'),
 		welcome: $('#label_WelcomeMessage'),
 		temperature: $('#label_Temperature'),
 		temperatureLabel: $('#label_TempMetric'),
-		toggleButton: $('#btn_MetricToggle'),
-		homeAnchor: $('#link_Homepage')
+		toggleButton: $('#btn_MetricToggle')
 	},
 
 	init: function() {
 		$DOM = this.dom
 		this.bindActions()
-		this.start()
+		this.setDOMLabels()
 	},
 
 	bindActions: function() {
 		$DOM.toggleButton.on('click', this.toggleTemperatureMetric)
 	},
 
-	start: function() {
+	setDOMLabels: function() {
 		$DOM.title.text('Local Weather')
 		$DOM.welcome.text('Please allow location access.')
 		$DOM.toggleButton.text('Switch Units')
-		$DOM.footer.text('Powered by DarkSky API')
-		$DOM.homeAnchor.text('pf').attr('href', 'http://www.phlfvry.com/')
 	},
 
 	updateWeather: function(apiCall) {
@@ -91,14 +87,19 @@ WeatherElements = {
 		}
 	},
 
-	getElements: function () {
+	generate: function () {
 		let type = 'cloud'
 		elementImage.src = `./elements/${this.types[type].image}`
 		const count = 2;
 		//let keys = Object.getOwnPropertyNames(this.types[type])
 		for (let i = 0; i < count; i ++)
 		{
-			this.elementArray.push([this.types[type], {x: 0+(16*i), y: 0, scale: 2}])
+			this.elementArray.push(
+				[this.types[type], {
+					x: 0+(16*i), 
+					y: 0, 
+					scale: 2
+				}])
 		}
 		this.wereGenerated = true;
 	},
@@ -206,7 +207,7 @@ CanvasArtisan = {
 				ctx.drawImage(elementImage, e[i][1].x, e[i][1].y, e[i][0].w, e[i][0].h)
 			}
 		} else {
-			WeatherElements.getElements()
+			WeatherElements.generate()
 		}
 	}, 
 

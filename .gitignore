@@ -1,5 +1,0 @@
-# Ignore temporary files
-*~
-
-# Ignore VIM swap files
-*.swp
