@@ -1,12 +1,12 @@
 'use strict'
 
 let $DOM,
-WeatherApp,
-WeatherElements,
-GeoLocation,
-Canvas, 
-CanvasArtisan,
-ctx
+  WeatherApp,
+  WeatherElements,
+  GeoLocation,
+  Canvas,
+  CanvasArtisan,
+  ctx
 
 WeatherApp = {
   api: 'https://api.darksky.net/forecast/165abf3d9f0478fd6a5d0d053a8e52c8/',
@@ -81,7 +81,7 @@ WeatherElements = {
       image: 'cloud.svg',
       width: 16,
       height: 16,
-      xSpeed: 0.5
+      xSpeed: 0.1
     },
     raindrop: {
       image: 'raindrop.svg',
@@ -92,7 +92,7 @@ WeatherElements = {
   },
 
   generate: function () {
-    const elementCount = 5;
+    const elementCount = 2;
     let t = 'cloud'
 
     elementImage.src = `./elements/${this.elementTypes[t].image}`
@@ -101,13 +101,12 @@ WeatherElements = {
     for (let i = 0; i < elementCount; i ++) {
       this.elementArray.push([
         this.elementTypes[t], {
-          x: 0+(16*i), 
-          y: 0, 
+          x: 0+(16*i*3),
+          y: 0,
           scale: 2
         }]
       )
     }
-    
     this.wereGenerated = true;
   },
 }
@@ -121,10 +120,11 @@ GeoLocation = {
     stateName: '',
     timeOfDay: ''
   },
-  
+
   init: function() {
     try {
-      if (!navigator.geolocation) throw 'Unsupported Browser' // TODO: add support for IP Lookup
+      // TODO: add support for IP Lookup
+      if (!navigator.geolocation) throw 'Unsupported Browser'
       navigator.geolocation.getCurrentPosition(this.locate)
     } catch (e) {
       $DOM.welcome.text('Error: ' + e)
@@ -153,8 +153,8 @@ GeoLocation = {
     WeatherApp.updateWeather(`${WeatherApp.api}${a.latitude},${a.longitude}`)
   },
 
+  // TODO: Call CanvasArtisan to update new background color
   setTimeOfDay: function(time){
-    // TODO: Call CanvasArtisan to update new background color
     console.log(`[GeoLocation]: ${time}`)
   }
 }
@@ -184,24 +184,24 @@ Canvas = {
   }
 }
 
+// TODO: add remaining colors and then turn them into gradients
 CanvasArtisan = {
-  // TODO: add remaining colors and then turn them into gradients
   backdrops: {
     dawn: '',
     morning: '',
     afternoon: '',
     day: '#199eda',
     dusk:'',
-    night: '#071a4c'    
+    night: '#071a4c'
   },
 
   refreshBackground: function(color) {
     ctx.fillStyle = this.backdrops[GeoLocation.attributes.timeOfDay] || this.backdrops['day']
     ctx.fillRect(0, 0, innerWidth, innerHeight)
   },
-
+  // TODO: code to add sun, moon, etc.
   drawStaticElement: function(obj) {
-    // TODO: code to add sun, moon, etc.
+    //
   },
 
   drawAnimatedElements: function() {
@@ -218,7 +218,7 @@ CanvasArtisan = {
     } else {
       WeatherElements.generate()
     }
-  }, 
+  },
 
   // main loop
   drawScene: function() {

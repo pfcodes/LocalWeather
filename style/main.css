@@ -42,25 +42,28 @@ h1#label_AppTitle {
 	font-weight: 100;
 	font-size: 70px;
 	margin-top: 25%;
+		text-shadow: 2px 2px 5px gray;
 }
 
 h2#label_AppSubtitle {
 	font-family: "Helvetica Neue";
 	font-size: 20px;
 	font-style: italic;
-	font-weight: lighter;
+	font-weight: 300;
+		text-shadow: 2px 2px 5px gray;
 }
 
 #label_Temperature, #label_TempMetric {
 	font-size: 100px;
 	font-weight: 100;
+	text-shadow: 2px 2px 5px gray;
 }
 
 a#btn_MetricToggle {
 	color: white;
 	text-decoration: none;
 	font-size: 15px;
-	font-weight: lighter;	
+	font-weight: 300;	
 	visibility: hidden;
 }	
 	
