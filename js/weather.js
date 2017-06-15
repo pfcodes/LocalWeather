@@ -37,17 +37,22 @@ WeatherApp = {
   },
 
   updateWeather: function(apiCall) {
-    console.log(`[WeatherApp]: API call - ${apiCall}`);
-
-    $.getJSON(apiCall, function(data) {
+    console.log(`[WeatherApp]: API call - ${apiCall}`)
+    $.ajax({
+      url: apiCall + '?function=jsonp',
+      type: 'GET',
+      crossDomain: true,
+      dataType: 'jsonp',
+      success: function(data) {
       const d = data.currently
-      GeoLocation.setTimeOfDay(d.time)
-
+      const g = GeoLocation
+      g.setTimeOfDay(d.time)
       $DOM.welcome.remove()
       $DOM.subtitle.text(d.summary)
       $DOM.temperature.text(Math.round(d.temperature))
       $DOM.toggleButton.css('visibility', 'visible')
       $DOM.temperatureLabel.html('&deg;F')
+      }
     })
   },
 
